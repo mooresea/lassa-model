@@ -27,11 +27,13 @@ if(admin==2){
   s = subset(s, ADM1_code != '')  
   s$uid = s$ADM1_code
 }
-
+#Remove countries outside of area of analysis
 
 # load population by age data
 a.tmp = read.csv('data/adm_1_pop_upd.csv')
 a.tmp$ADM1_code = paste(a.tmp$ISO,'.',a.tmp$SP_ID_1,'_1',sep='')
+#Remove countries outside of area of analysis
+s=s[which(s$ADM_0 %in% unique(a.tmp$ISO)),]
 a = a.tmp
 for(ii in 1:nrow(s)){
   a[ii,] = a.tmp[which(paste(a.tmp$ADM1_code,a.tmp$YEAR) == paste(s$ADM1_code,pmin(2014,s$YEAR))[ii]),]
