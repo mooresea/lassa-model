@@ -1,3 +1,7 @@
+##
+## PLOS NTD revised version
+## -- plots of age
+##
 library(ggplot2)
 library(tidyverse)
 
@@ -12,6 +16,8 @@ r$total_pop=apply(r[,ind.pop],1,sum)
 r$pop_18plus=apply(r[,ind.pop[19:100]],1,sum)
 r$pop_u12=apply(r[,ind.pop[1:12]],1,sum)
 r$pop_12_17=apply(r[,ind.pop[13:18]],1,sum)
+# matrix of population distribution across adm1s and ages
+pop.by.adm.by.age = r[,ind.pop]
 
 if(admin==1){
   adm.names=subset(r, select=c(COUNTRY, ISO, ADMIN_1,uid,total_pop,pop_18plus,pop_u12,pop_12_17))
@@ -548,359 +554,524 @@ dev.off()
 
 
 
-###
-### OLD PLOTS
-###
-#plot distributions of force of infection
-jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_modeled_outpredict.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
-par(mar=c(8,4,4,2))
-plot(-100,-100,type='l',xlim=c(1346,nrow(rr.foi)),las=1,xaxt='n',
-     ylim=c(0, 15),
-      #max(infs_infrisk_dat$inf_ar_hi)*200+1),
-     xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
-mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nModeled FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
-
-axis(1,at=1346:nrow(rr.foi),labels=infs_norisk_dat$uidF[order(infs_norisk_dat$inf_ar_md)][1346:nrow(rr.foi)],las=2)
-#axis(1,at=1346:nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][1346:nrow(rr.foi)],las=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.96,0.76,0.26,0.5))
-lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_norisk_dat$inf_ar_lo[order(infs_norisk_dat$inf_ar_md)]*200,
-    rev(infs_norisk_dat$inf_ar_hi[order(infs_norisk_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.76,0.26,0.2))
-lines(infs_norisk_dat$inf_ar_md[order(infs_norisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_lfrisk_dat$inf_ar_lo[order(infs_lfrisk_dat$inf_ar_md)]*200,
-    rev(infs_lfrisk_dat$inf_ar_hi[order(infs_lfrisk_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.26,0.26,0.2))
-lines(infs_lfrisk_dat$inf_ar_md[order(infs_lfrisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
-abline(h=10,lty=2)
-legend("topleft",c("Seropos - no risk","Seropos - infection risk","Seropos - LF risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.96,0.76,0.26),rgb(0.9,0.26,0.26)),bty="n")
-
-dev.off()
-#write.csv(spillover.infections, file="results/simulated_spillovers_recent.
-
-
-# plot distributions of force of infection
-jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
-par(mar=c(6,4,4,2))
-plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
-     ylim=c(0,
-           max(infs_infrisk_dat$inf_ar_hi)*200+1),
-     xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
-mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
-
-#axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
-axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.96,0.76,0.26,0.5))
-lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_norisk_dat$inf_ar_lo[order(infs_norisk_dat$inf_ar_md)]*200,
-    rev(infs_norisk_dat$inf_ar_hi[order(infs_norisk_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.76,0.26,0.2))
-lines(infs_norisk_dat$inf_ar_md[order(infs_norisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_lfrisk_dat$inf_ar_lo[order(infs_lfrisk_dat$inf_ar_md)]*200,
-    rev(infs_lfrisk_dat$inf_ar_hi[order(infs_lfrisk_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.26,0.26,0.2))
-lines(infs_lfrisk_dat$inf_ar_md[order(infs_lfrisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
-abline(h=10,lty=2)
-legend("topleft",c("Seropos - no risk","Seropos - LF risk","Seropos - infection risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.6,0.26,0.26),rgb(0.96,0.76,0.26)),bty="n")
-
-dev.off()
-#write.csv(spillover.infections, file="results/simulated_spillovers_recent.csv")
-
-jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw_serorev_risk.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
-par(mar=c(6,4,4,2))
-plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
-     ylim=c(0,
-            max(infs_infrisk_rev_dat$inf_ar_hi)*200+1),
-     xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
-mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
-
-#axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
-axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_rev_dat$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_rev_dat$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.96,0.76,0.26,0.5))
-lines(infs_infrisk_rev_dat$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_norisk_rev_dat$inf_ar_lo[order(infs_norisk_rev_dat$inf_ar_md)]*200,
-    rev(infs_norisk_rev_dat$inf_ar_hi[order(infs_norisk_rev_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.76,0.26,0.2))
-lines(infs_norisk_rev_dat$inf_ar_md[order(infs_norisk_rev_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_lfrisk_rev_dat$inf_ar_lo[order(infs_lfrisk_rev_dat$inf_ar_md)]*200,
-    rev(infs_lfrisk_rev_dat$inf_ar_hi[order(infs_lfrisk_rev_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.26,0.26,0.2))
-lines(infs_lfrisk_rev_dat$inf_ar_md[order(infs_lfrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
-abline(h=10,lty=2)
-legend("topleft",c("Seropos - no risk","Seropos - infection risk","Seropos - LF risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.6,0.26,0.26),rgb(0.96,0.76,0.26)),bty="n")
-
-dev.off()
-
-
-jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_',ifelse(raw.ind==1,'raw','modeled_outpredict'),'_serorev_compare.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
-par(mar=c(6,4,4,2))
-plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
-     ylim=c(0,
-            max(infs_infrisk_rev_dat$inf_ar_hi)*200+1),
-     xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
-mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
-
-#axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
-axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_rev_dat$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_rev_dat$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.96,0.176,0.826,0.5))
-lines(infs_infrisk_rev_dat$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.96,0.176,0.826,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.16,0.176,0.926,0.2))
-lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.16,0.176,0.926,1))
-
+# ###
+# ### OLD PLOTS
+# ###
+# #plot distributions of force of infection
+# jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_modeled_outpredict.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
+# par(mar=c(8,4,4,2))
+# plot(-100,-100,type='l',xlim=c(1346,nrow(rr.foi)),las=1,xaxt='n',
+#      ylim=c(0, 15),
+#       #max(infs_infrisk_dat$inf_ar_hi)*200+1),
+#      xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
+# mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nModeled FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
+# 
+# axis(1,at=1346:nrow(rr.foi),labels=infs_norisk_dat$uidF[order(infs_norisk_dat$inf_ar_md)][1346:nrow(rr.foi)],las=2)
+# #axis(1,at=1346:nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][1346:nrow(rr.foi)],las=2)
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.96,0.76,0.26,0.5))
+# lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_norisk_dat$inf_ar_lo[order(infs_norisk_dat$inf_ar_md)]*200,
+#     rev(infs_norisk_dat$inf_ar_hi[order(infs_norisk_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.6,0.76,0.26,0.2))
+# lines(infs_norisk_dat$inf_ar_md[order(infs_norisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_lfrisk_dat$inf_ar_lo[order(infs_lfrisk_dat$inf_ar_md)]*200,
+#     rev(infs_lfrisk_dat$inf_ar_hi[order(infs_lfrisk_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.6,0.26,0.26,0.2))
+# lines(infs_lfrisk_dat$inf_ar_md[order(infs_lfrisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
+# abline(h=10,lty=2)
+# legend("topleft",c("Seropos - no risk","Seropos - infection risk","Seropos - LF risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.96,0.76,0.26),rgb(0.9,0.26,0.26)),bty="n")
+# 
+# dev.off()
+# #write.csv(spillover.infections, file="results/simulated_spillovers_recent.
+# 
+# 
+# # plot distributions of force of infection
+# jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
+# par(mar=c(6,4,4,2))
+# plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
+#      ylim=c(0,
+#            max(infs_infrisk_dat$inf_ar_hi)*200+1),
+#      xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
+# mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
+# 
+# #axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
+# axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.96,0.76,0.26,0.5))
+# lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_norisk_dat$inf_ar_lo[order(infs_norisk_dat$inf_ar_md)]*200,
+#     rev(infs_norisk_dat$inf_ar_hi[order(infs_norisk_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.6,0.76,0.26,0.2))
+# lines(infs_norisk_dat$inf_ar_md[order(infs_norisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_lfrisk_dat$inf_ar_lo[order(infs_lfrisk_dat$inf_ar_md)]*200,
+#     rev(infs_lfrisk_dat$inf_ar_hi[order(infs_lfrisk_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.6,0.26,0.26,0.2))
+# lines(infs_lfrisk_dat$inf_ar_md[order(infs_lfrisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
+# abline(h=10,lty=2)
+# legend("topleft",c("Seropos - no risk","Seropos - LF risk","Seropos - infection risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.6,0.26,0.26),rgb(0.96,0.76,0.26)),bty="n")
+# 
+# dev.off()
+# #write.csv(spillover.infections, file="results/simulated_spillovers_recent.csv")
+# 
+# jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw_serorev_risk.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
+# par(mar=c(6,4,4,2))
+# plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
+#      ylim=c(0,
+#             max(infs_infrisk_rev_dat$inf_ar_hi)*200+1),
+#      xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
+# mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
+# 
+# #axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
+# axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_rev_dat$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_rev_dat$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.96,0.76,0.26,0.5))
+# lines(infs_infrisk_rev_dat$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_norisk_rev_dat$inf_ar_lo[order(infs_norisk_rev_dat$inf_ar_md)]*200,
+#     rev(infs_norisk_rev_dat$inf_ar_hi[order(infs_norisk_rev_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.6,0.76,0.26,0.2))
+# lines(infs_norisk_rev_dat$inf_ar_md[order(infs_norisk_rev_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
+# 
 # polygon(
 #   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
 #     infs_lfrisk_rev_dat$inf_ar_lo[order(infs_lfrisk_rev_dat$inf_ar_md)]*200,
 #     rev(infs_lfrisk_rev_dat$inf_ar_hi[order(infs_lfrisk_rev_dat$inf_ar_md)]*200)),
 #   border=NA,col=rgb(0.6,0.26,0.26,0.2))
 # lines(infs_lfrisk_rev_dat$inf_ar_md[order(infs_lfrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
-abline(h=10,lty=2)
-legend("topleft",c("Seroreverted - full risk","Seroreverted - reduced risk"),lwd=2,col=c(rgb(0.16,0.176,0.926),rgb(0.96,0.176,0.826)),bty="n")
-
-dev.off()
-
-##Plot of distribution
-jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),"_",ifelse(raw.ind==1,'raw','model_outpredict'),'_interannual_variation.jpeg',sep=''),width=10,height=6.5,units='in',res=300,pointsize=14)
-infs_infrisk_rev_dat$NAME_1[grep("Nz",infs_infrisk_rev_dat$NAME_1)]="Nzerekore"
-distj=tail(order(infs_infrisk_rev_dat$inf_ar_md),6)
-par(mfrow=c(2,3))
-for(jj in distj){
-  hist(as.numeric(infs_infrisk_rev_dat[jj,inf.ind])/infs_infrisk_rev_dat$total_pop[jj],breaks=40,xlab="Annual attack rate",xlim=c(0,0.22),
-       main=paste(infs_infrisk_rev_dat$Country[jj],infs_infrisk_rev_dat$NAME_1[jj],infs_infrisk_rev_dat$NAME_2[jj],sep=" - "),cex=1.2)
-  abline(v=infs_infrisk_rev_dat$inf_ar_md[jj],lty=2,lwd=1.5)
-  
-}
-dev.off()
-
-##Plot of distribution
-jpeg(paste('plots/top_LF_rates_adm',admin,'_revrate',as.character(rev_rate*100),"_",ifelse(raw.ind==1,'raw','model_outpredict'),'_interannual_variation.jpeg',sep=''),width=8,height=7.5,units='in',res=300,pointsize=14)
-infs_infrisk_rev_dat$NAME_1[grep("Nz",infs_infrisk_rev_dat$NAME_1)]="Nzerekore"
-distj=tail(order(infs_infrisk_rev_dat$inf_ar_md),9)
-par(mfrow=c(3,3))
-for(jj in distj){
-  hist(200*as.numeric(infs_infrisk_rev_dat[jj,inf.ind])/infs_infrisk_rev_dat$total_pop[jj],breaks=40,xlab="Annual LF incidence rate (per 1000)",
-       xlim=c(0,50),
-       main=paste(infs_infrisk_rev_dat$Country[jj],infs_infrisk_rev_dat$NAME_1[jj],infs_infrisk_rev_dat$NAME_2[jj],sep=" - "),cex=1.2)
-  abline(v=200*infs_infrisk_rev_dat$inf_ar_md[jj],lty=2,lwd=1.5,col="red")
-  
-}
-dev.off()
-
-
-##
-## ADMIN 1 PLOTS
-##
-# plot distributions of force of infection
-jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_modeled_outpredict.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
-par(mar=c(8,4,4,2))
-plot(-100,-100,type='l',xlim=c(145,nrow(rr.foi)),las=1,xaxt='n',
-     ylim=c(0, 20),
-     #max(infs_infrisk_dat$inf_ar_hi)*200+1),
-     xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
-mtext(paste0('Adm1s sorted by median Attack Rate - Top 20\nModeled FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
-
-#axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
-axis(1,at=145:nrow(rr.foi),labels=paste(infs_infrisk_dat$ISO,infs_infrisk_dat$ADMIN_1,sep=" - ")[order(infs_infrisk_dat$inf_ar_md)][145:nrow(rr.foi)],las=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.96,0.76,0.26,0.5))
-lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_norisk_dat$inf_ar_lo[order(infs_norisk_dat$inf_ar_md)]*200,
-    rev(infs_norisk_dat$inf_ar_hi[order(infs_norisk_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.76,0.26,0.2))
-lines(infs_norisk_dat$inf_ar_md[order(infs_norisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_lfrisk_dat$inf_ar_lo[order(infs_lfrisk_dat$inf_ar_md)]*200,
-    rev(infs_lfrisk_dat$inf_ar_hi[order(infs_lfrisk_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.26,0.26,0.2))
-lines(infs_lfrisk_dat$inf_ar_md[order(infs_lfrisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
-abline(h=10,lty=2)
-legend("topleft",c("Seropos - no risk","Seropos - infection risk","Seropos - LF risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.96,0.76,0.26),rgb(0.9,0.26,0.26)),bty="n")
-
-dev.off()
-#write.csv(spillover.infections, file="results/simulated_spillovers_recent.
-
-
-# plot distributions of force of infection
-jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
-par(mar=c(8,4,4,2))
-plot(-100,-100,type='l',xlim=c(187,nrow(rr.foi)),las=1,xaxt='n',
-     ylim=c(0,15),
-     # max(infs_infrisk_dat$inf_ar_hi)*200+1),
-     xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
-mtext(paste0('Adm1s sorted by median Attack Rate - Top 20\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
-
-#axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
-axis(1,at=187:nrow(rr.foi),labels=paste(infs_infrisk_dat$ISO,infs_infrisk_dat$ADMIN_1,sep=" - ")[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.96,0.76,0.26,0.5))
-lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_norisk_dat$inf_ar_lo[order(infs_norisk_dat$inf_ar_md)]*200,
-    rev(infs_norisk_dat$inf_ar_hi[order(infs_norisk_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.76,0.26,0.2))
-lines(infs_norisk_dat$inf_ar_md[order(infs_norisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_lfrisk_dat$inf_ar_lo[order(infs_lfrisk_dat$inf_ar_md)]*200,
-    rev(infs_lfrisk_dat$inf_ar_hi[order(infs_lfrisk_dat$inf_ar_md)]*200)),
-  border=NA,col=rgb(0.6,0.26,0.26,0.2))
-lines(infs_lfrisk_dat$inf_ar_md[order(infs_lfrisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
-abline(h=10,lty=2)
-legend("topleft",c("Seropos - no risk","Seropos - infection risk","Seropos - LF risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.6,0.26,0.26),rgb(0.96,0.76,0.26)),bty="n")
-
-dev.off()
-#write.csv(spillover.infections, file="results/simulated_spillovers_recent.csv")
-
-
-# plot age-specific LF of force of infection
-jpeg(paste('plots/top_age-specific_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
-par(mar=c(6,4,4,2))
-plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
-     ylim=c(0,
-            max(infs_infrisk_dat$inf_ar_hi)*200+1),
-     xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
-mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
-
-#axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
-axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
-
+# abline(h=10,lty=2)
+# legend("topleft",c("Seropos - no risk","Seropos - infection risk","Seropos - LF risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.6,0.26,0.26),rgb(0.96,0.76,0.26)),bty="n")
+# 
+# dev.off()
+# 
+# 
+# jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_',ifelse(raw.ind==1,'raw','modeled_outpredict'),'_serorev_compare.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
+# par(mar=c(6,4,4,2))
+# plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
+#      ylim=c(0,
+#             max(infs_infrisk_rev_dat$inf_ar_hi)*200+1),
+#      xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
+# mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
+# 
+# #axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
+# axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_rev_dat$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_rev_dat$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.96,0.176,0.826,0.5))
+# lines(infs_infrisk_rev_dat$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.96,0.176,0.826,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.16,0.176,0.926,0.2))
+# lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.16,0.176,0.926,1))
+# 
+# # polygon(
+# #   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+# #     infs_lfrisk_rev_dat$inf_ar_lo[order(infs_lfrisk_rev_dat$inf_ar_md)]*200,
+# #     rev(infs_lfrisk_rev_dat$inf_ar_hi[order(infs_lfrisk_rev_dat$inf_ar_md)]*200)),
+# #   border=NA,col=rgb(0.6,0.26,0.26,0.2))
+# # lines(infs_lfrisk_rev_dat$inf_ar_md[order(infs_lfrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
+# abline(h=10,lty=2)
+# legend("topleft",c("Seroreverted - full risk","Seroreverted - reduced risk"),lwd=2,col=c(rgb(0.16,0.176,0.926),rgb(0.96,0.176,0.826)),bty="n")
+# 
+# dev.off()
+# 
+# ##Plot of distribution
+# jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),"_",ifelse(raw.ind==1,'raw','model_outpredict'),'_interannual_variation.jpeg',sep=''),width=10,height=6.5,units='in',res=300,pointsize=14)
+# infs_infrisk_rev_dat$NAME_1[grep("Nz",infs_infrisk_rev_dat$NAME_1)]="Nzerekore"
+# distj=tail(order(infs_infrisk_rev_dat$inf_ar_md),6)
+# par(mfrow=c(2,3))
+# for(jj in distj){
+#   hist(as.numeric(infs_infrisk_rev_dat[jj,inf.ind])/infs_infrisk_rev_dat$total_pop[jj],breaks=40,xlab="Annual attack rate",xlim=c(0,0.22),
+#        main=paste(infs_infrisk_rev_dat$Country[jj],infs_infrisk_rev_dat$NAME_1[jj],infs_infrisk_rev_dat$NAME_2[jj],sep=" - "),cex=1.2)
+#   abline(v=infs_infrisk_rev_dat$inf_ar_md[jj],lty=2,lwd=1.5)
+#   
+# }
+# dev.off()
+# 
+# ##Plot of distribution
+# jpeg(paste('plots/top_LF_rates_adm',admin,'_revrate',as.character(rev_rate*100),"_",ifelse(raw.ind==1,'raw','model_outpredict'),'_interannual_variation.jpeg',sep=''),width=8,height=7.5,units='in',res=300,pointsize=14)
+# infs_infrisk_rev_dat$NAME_1[grep("Nz",infs_infrisk_rev_dat$NAME_1)]="Nzerekore"
+# distj=tail(order(infs_infrisk_rev_dat$inf_ar_md),9)
+# par(mfrow=c(3,3))
+# for(jj in distj){
+#   hist(200*as.numeric(infs_infrisk_rev_dat[jj,inf.ind])/infs_infrisk_rev_dat$total_pop[jj],breaks=40,xlab="Annual LF incidence rate (per 1000)",
+#        xlim=c(0,50),
+#        main=paste(infs_infrisk_rev_dat$Country[jj],infs_infrisk_rev_dat$NAME_1[jj],infs_infrisk_rev_dat$NAME_2[jj],sep=" - "),cex=1.2)
+#   abline(v=200*infs_infrisk_rev_dat$inf_ar_md[jj],lty=2,lwd=1.5,col="red")
+#   
+# }
+# dev.off()
+# 
+# 
+# ##
+# ## ADMIN 1 PLOTS
+# ##
+# # plot distributions of force of infection
+# jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_modeled_outpredict.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
+# par(mar=c(8,4,4,2))
+# plot(-100,-100,type='l',xlim=c(145,nrow(rr.foi)),las=1,xaxt='n',
+#      ylim=c(0, 20),
+#      #max(infs_infrisk_dat$inf_ar_hi)*200+1),
+#      xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
+# mtext(paste0('Adm1s sorted by median Attack Rate - Top 20\nModeled FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
+# 
+# #axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
+# axis(1,at=145:nrow(rr.foi),labels=paste(infs_infrisk_dat$ISO,infs_infrisk_dat$ADMIN_1,sep=" - ")[order(infs_infrisk_dat$inf_ar_md)][145:nrow(rr.foi)],las=2)
+# 
 # polygon(
 #   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
 #     infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
 #     rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
 #   border=NA,col=rgb(0.96,0.76,0.26,0.5))
-# lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1),lwd=2)
-
-
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_dat_11$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_dat_11$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.16,0.16,0.906,0.2))
-lines(infs_lfrisk_dat_11$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.16,0.16,0.906,1),lwd=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_dat_17$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_dat_17$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.76,0.26,0.26,0.2))
-lines(infs_infrisk_dat_17$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.76,0.26,0.26,1),lwd=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_dat_18$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_dat_18$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.16,0.76,0.06,0.2))
-lines(infs_infrisk_dat_18$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.16,0.76,0.06,1),lwd=2)
-
-abline(h=10,lty=2)
-legend("topleft",c("Age 18+","12-17 years","<12 years"),lwd=2,col=c(rgb(0.16,0.76,0.06,1),rgb(0.76,0.26,0.26,1),rgb(0.16,0.16,0.906)),bty="n")
-
-dev.off()
-
-
-# plot age-specific LF of force of infection
-jpeg(paste('plots/top_age-specific_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw_serorev_risk.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
-par(mar=c(6,4,4,2))
-plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
-     ylim=c(0,
-            max(infs_infrisk_rev_dat$inf_ar_hi)*200+2),
-     xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
-mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
-
-#axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
-axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_rev_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
-
+# lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_norisk_dat$inf_ar_lo[order(infs_norisk_dat$inf_ar_md)]*200,
+#     rev(infs_norisk_dat$inf_ar_hi[order(infs_norisk_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.6,0.76,0.26,0.2))
+# lines(infs_norisk_dat$inf_ar_md[order(infs_norisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_lfrisk_dat$inf_ar_lo[order(infs_lfrisk_dat$inf_ar_md)]*200,
+#     rev(infs_lfrisk_dat$inf_ar_hi[order(infs_lfrisk_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.6,0.26,0.26,0.2))
+# lines(infs_lfrisk_dat$inf_ar_md[order(infs_lfrisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
+# abline(h=10,lty=2)
+# legend("topleft",c("Seropos - no risk","Seropos - infection risk","Seropos - LF risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.96,0.76,0.26),rgb(0.9,0.26,0.26)),bty="n")
+# 
+# dev.off()
+# #write.csv(spillover.infections, file="results/simulated_spillovers_recent.
+# 
+# 
+# # plot distributions of force of infection
+# jpeg(paste('plots/top_attack_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
+# par(mar=c(8,4,4,2))
+# plot(-100,-100,type='l',xlim=c(187,nrow(rr.foi)),las=1,xaxt='n',
+#      ylim=c(0,15),
+#      # max(infs_infrisk_dat$inf_ar_hi)*200+1),
+#      xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
+# mtext(paste0('Adm1s sorted by median Attack Rate - Top 20\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
+# 
+# #axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
+# axis(1,at=187:nrow(rr.foi),labels=paste(infs_infrisk_dat$ISO,infs_infrisk_dat$ADMIN_1,sep=" - ")[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
+# 
 # polygon(
 #   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
 #     infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
 #     rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
 #   border=NA,col=rgb(0.96,0.76,0.26,0.5))
-# lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1),lwd=2)
-
-
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_rev_dat_11$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_rev_dat_11$inf_ar_hi[order(infs_infrisk_rev_rev_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.16,0.16,0.906,0.2))
-lines(infs_infrisk_rev_dat_11$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.16,0.16,0.906,1),lwd=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_rev_dat_17$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_rev_dat_17$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.76,0.26,0.26,0.2))
-lines(infs_infrisk_rev_dat_17$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.76,0.26,0.26,1),lwd=2)
-
-polygon(
-  c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
-    infs_infrisk_rev_dat_18$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
-    rev(infs_infrisk_rev_dat_18$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)])*200),
-  border=NA,col=rgb(0.16,0.76,0.06,0.2))
-lines(infs_infrisk_rev_dat_18$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.16,0.76,0.06,1),lwd=2)
-
-abline(h=10,lty=2)
-legend("topleft",c("Age 18+","12-17 years","<12 years"),lwd=2,col=c(rgb(0.16,0.76,0.06,1),rgb(0.76,0.26,0.26,1),rgb(0.16,0.16,0.906)),bty="n")
-
-dev.off()
+# lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_norisk_dat$inf_ar_lo[order(infs_norisk_dat$inf_ar_md)]*200,
+#     rev(infs_norisk_dat$inf_ar_hi[order(infs_norisk_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.6,0.76,0.26,0.2))
+# lines(infs_norisk_dat$inf_ar_md[order(infs_norisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.76,0.26,1))
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_lfrisk_dat$inf_ar_lo[order(infs_lfrisk_dat$inf_ar_md)]*200,
+#     rev(infs_lfrisk_dat$inf_ar_hi[order(infs_lfrisk_dat$inf_ar_md)]*200)),
+#   border=NA,col=rgb(0.6,0.26,0.26,0.2))
+# lines(infs_lfrisk_dat$inf_ar_md[order(infs_lfrisk_dat$inf_ar_md)]*200,col=rgb(0.6,0.26,0.26,1))
+# abline(h=10,lty=2)
+# legend("topleft",c("Seropos - no risk","Seropos - infection risk","Seropos - LF risk"),lwd=2,col=c(rgb(0.6,0.76,0.26),rgb(0.6,0.26,0.26),rgb(0.96,0.76,0.26)),bty="n")
+# 
+# dev.off()
+# #write.csv(spillover.infections, file="results/simulated_spillovers_recent.csv")
+# 
+# 
+# # plot age-specific LF of force of infection
+# jpeg(paste('plots/top_age-specific_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
+# par(mar=c(6,4,4,2))
+# plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
+#      ylim=c(0,
+#             max(infs_infrisk_dat$inf_ar_hi)*200+1),
+#      xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
+# mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
+# 
+# #axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
+# axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
+# 
+# # polygon(
+# #   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+# #     infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
+# #     rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
+# #   border=NA,col=rgb(0.96,0.76,0.26,0.5))
+# # lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1),lwd=2)
+# 
+# 
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_dat_11$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_dat_11$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.16,0.16,0.906,0.2))
+# lines(infs_lfrisk_dat_11$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.16,0.16,0.906,1),lwd=2)
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_dat_17$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_dat_17$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.76,0.26,0.26,0.2))
+# lines(infs_infrisk_dat_17$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.76,0.26,0.26,1),lwd=2)
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_dat_18$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_dat_18$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.16,0.76,0.06,0.2))
+# lines(infs_infrisk_dat_18$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.16,0.76,0.06,1),lwd=2)
+# 
+# abline(h=10,lty=2)
+# legend("topleft",c("Age 18+","12-17 years","<12 years"),lwd=2,col=c(rgb(0.16,0.76,0.06,1),rgb(0.76,0.26,0.26,1),rgb(0.16,0.16,0.906)),bty="n")
+# 
+# dev.off()
+# 
+# 
+# # plot age-specific LF of force of infection
+# jpeg(paste('plots/top_age-specific_rates_adm',admin,'_revrate',as.character(rev_rate*100),'_raw_serorev_risk.jpeg',sep=''),width=8,height=6.5,units='in',res=300)
+# par(mar=c(6,4,4,2))
+# plot(-100,-100,type='l',xlim=c((nrow(rr.foi)-29),nrow(rr.foi)),las=1,xaxt='n',
+#      ylim=c(0,
+#             max(infs_infrisk_rev_dat$inf_ar_hi)*200+2),
+#      xlab='',ylab=' Annual Lassa Fever Attack Rate (per 1000)',xaxs='i',yaxs='i')
+# mtext(paste0('Adm2s sorted by median Attack Rate - Top 30\nProjected FOI (seroreversion = ',rev_rate*100,'%/yr)'),3,line=0.75)
+# 
+# #axis(1,at=187:nrow(rr.foi),labels=infs_infrisk_dat$uidF[order(infs_infrisk_dat$inf_ar_md)][187:nrow(rr.foi)],las=2)
+# axis(1,at=(nrow(rr.foi)-29):nrow(rr.foi),labels=infs_infrisk_rev_dat$uid[order(infs_infrisk_dat$inf_ar_md)][(nrow(rr.foi)-29):nrow(rr.foi)],las=2)
+# 
+# # polygon(
+# #   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+# #     infs_infrisk_dat$inf_ar_lo[order(infs_infrisk_dat$inf_ar_md)]*200,
+# #     rev(infs_infrisk_dat$inf_ar_hi[order(infs_infrisk_dat$inf_ar_md)])*200),
+# #   border=NA,col=rgb(0.96,0.76,0.26,0.5))
+# # lines(infs_infrisk_dat$inf_ar_md[order(infs_infrisk_dat$inf_ar_md)]*200,col=rgb(0.96,0.76,0.26,1),lwd=2)
+# 
+# 
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_rev_dat_11$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_rev_dat_11$inf_ar_hi[order(infs_infrisk_rev_rev_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.16,0.16,0.906,0.2))
+# lines(infs_infrisk_rev_dat_11$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.16,0.16,0.906,1),lwd=2)
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_rev_dat_17$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_rev_dat_17$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.76,0.26,0.26,0.2))
+# lines(infs_infrisk_rev_dat_17$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.76,0.26,0.26,1),lwd=2)
+# 
+# polygon(
+#   c(1:nrow(rr.foi),rev(1:nrow(rr.foi))),c(
+#     infs_infrisk_rev_dat_18$inf_ar_lo[order(infs_infrisk_rev_dat$inf_ar_md)]*200,
+#     rev(infs_infrisk_rev_dat_18$inf_ar_hi[order(infs_infrisk_rev_dat$inf_ar_md)])*200),
+#   border=NA,col=rgb(0.16,0.76,0.06,0.2))
+# lines(infs_infrisk_rev_dat_18$inf_ar_md[order(infs_infrisk_rev_dat$inf_ar_md)]*200,col=rgb(0.16,0.76,0.06,1),lwd=2)
+# 
+# abline(h=10,lty=2)
+# legend("topleft",c("Age 18+","12-17 years","<12 years"),lwd=2,col=c(rgb(0.16,0.76,0.06,1),rgb(0.76,0.26,0.26,1),rgb(0.16,0.16,0.906)),bty="n")
+# 
+# dev.off()
+# 
+# ##
+# ## Alternative figure - incid by age
+# ##
+# #median_infs=rep(NA,nrow(spillover.infections.lf.risk.reinf))
+# #for(i in 1:nrow(spillover.infections.lf.risk.reinf)){
+# median_infs=apply(spillover.infections.lf.risk.reinf[,1,],1,median)
+# median_inc=median_infs/pop.by.adm.by.age[,1]
+# incid_o=rev(order(median_inc))
+# 
+# ##Want rates not infs
+# infs_to_incid=function(ind,infs_mat,pop_mat){
+#   imat=infs_mat[ind,,]
+#   incid_mat=matrix(NA,nrow=nrow(imat),ncol=ncol(imat))
+#   for(j in 1:nrow(imat)){
+#     incid_mat[j,]=imat[j,]*200/pop_mat[ind,j]
+#   }
+#   #return(incid_mat)
+#   incid_sum=apply(incid_mat,1,function(x) quantile(x,c(0.025,.25,.5,.75,.975),na.rm=T))
+#   incid_sum=as.data.frame(t(incid_sum))
+#   colnames(incid_sum)=c("q025","q25","q5","q75","q975")
+#   incid_sum$age=1:nrow(incid_mat)
+#   return(incid_sum)
+# }
+# 
+# incid_a1=infs_to_incid(incid_o[1],spillover.infections.lf.risk.reinf,pop.by.adm.by.age)
+# age_p1<-ggplot(incid_a1,aes(x=age,y=q5))+
+#   geom_line(lwd=1)+
+#   theme_bw()+
+#   geom_ribbon(aes(ymin=q025,ymax=q975),alpha=0.2)+
+#     geom_ribbon(aes(ymin=q25,ymax=q75),alpha=0.5)+
+#   coord_cartesian(xlim=c(0,80),ylim=c(0,40))+
+#   #xlim(0,80)+
+#   #ylim(0,40)+
+#   annotate(geom="text",label=paste(adm.names$Country[incid_o[1]],"-\n",adm.names$NAME_2[incid_o[1]]),
+#            x=70,y=37)+
+#   xlab("Age")+
+#   ylab("Annual Lassa Fever\n incidence rate (per 1,000)")+
+#  # guides(fill=guide_legend(title="Age"))+
+#   theme(axis.title=element_text(size=14),
+#         legend.text=element_text(size=12),
+#         legend.title=element_text(size=14),
+#         axis.text=element_text(size=11)) #,
+# 
+# incid_a2=infs_to_incid(incid_o[2],spillover.infections.lf.risk.reinf,pop.by.adm.by.age)
+# age_p2<-ggplot(incid_a2,aes(x=age,y=q5))+
+#   geom_line(lwd=1)+
+#   theme_bw()+
+#   geom_ribbon(aes(ymin=q025,ymax=q975),alpha=0.2)+
+#   geom_ribbon(aes(ymin=q25,ymax=q75),alpha=0.5)+
+#   coord_cartesian(xlim=c(0,80),ylim=c(0,40))+
+#   #xlim(0,80)+
+#   #ylim(0,40)+
+#   annotate(geom="text",label=paste(adm.names$Country[incid_o[2]],"-\n",adm.names$NAME_2[incid_o[2]]),
+#            x=70,y=37)+
+#   xlab("Age")+
+#   ylab("Annual Lassa Fever\n incidence rate (per 1,000)")+
+#   # guides(fill=guide_legend(title="Age"))+
+#   theme(axis.title=element_text(size=14),
+#         legend.text=element_text(size=12),
+#         legend.title=element_text(size=14),
+#         axis.text=element_text(size=11)) #,
+# 
+# 
+# incid_a3=infs_to_incid(incid_o[3],spillover.infections.lf.risk.reinf,pop.by.adm.by.age)
+# age_p3<-ggplot(incid_a3,aes(x=age,y=q5))+
+#   geom_line(lwd=1)+
+#   theme_bw()+
+#   geom_ribbon(aes(ymin=q025,ymax=q975),alpha=0.2)+
+#   geom_ribbon(aes(ymin=q25,ymax=q75),alpha=0.5)+
+#   coord_cartesian(xlim=c(0,80),ylim=c(0,40))+
+#   #xlim(0,80)+
+#   #ylim(0,40)+
+#   annotate(geom="text",label=paste(adm.names$Country[incid_o[3]],"-\n",adm.names$NAME_2[incid_o[3]]),
+#            x=70,y=37)+
+#   xlab("Age")+
+#   ylab("Annual Lassa Fever\n incidence rate (per 1,000)")+
+#   # guides(fill=guide_legend(title="Age"))+
+#   theme(axis.title=element_text(size=14),
+#         legend.text=element_text(size=12),
+#         legend.title=element_text(size=14),
+#         axis.text=element_text(size=11)) #,
+# 
+# 
+# incid_a4=infs_to_incid(incid_o[4],spillover.infections.lf.risk.reinf,pop.by.adm.by.age)
+# age_p4<-ggplot(incid_a4,aes(x=age,y=q5))+
+#   geom_line(lwd=1)+
+#   theme_bw()+
+#   geom_ribbon(aes(ymin=q025,ymax=q975),alpha=0.2)+
+#   geom_ribbon(aes(ymin=q25,ymax=q75),alpha=0.5)+
+#   coord_cartesian(xlim=c(0,80),ylim=c(0,40))+
+#   #xlim(0,80)+
+#   #ylim(0,40)+
+#   annotate(geom="text",label=paste(adm.names$Country[incid_o[4]],"-\n",adm.names$NAME_2[incid_o[4]]),
+#            x=70,y=37)+
+#   xlab("Age")+
+#   ylab("Annual Lassa Fever\n incidence rate (per 1,000)")+
+#   # guides(fill=guide_legend(title="Age"))+
+#   theme(axis.title=element_text(size=14),
+#         legend.text=element_text(size=12),
+#         legend.title=element_text(size=14),
+#         axis.text=element_text(size=11)) #,
+# 
+# 
+# incid_a5=infs_to_incid(incid_o[5],spillover.infections.lf.risk.reinf,pop.by.adm.by.age)
+# age_p5<-ggplot(incid_a5,aes(x=age,y=q5))+
+#   geom_line(lwd=1)+
+#   theme_bw()+
+#   geom_ribbon(aes(ymin=q025,ymax=q975),alpha=0.2)+
+#   geom_ribbon(aes(ymin=q25,ymax=q75),alpha=0.5)+
+#   coord_cartesian(xlim=c(0,80),ylim=c(0,40))+
+#   #xlim(0,80)+
+#   #ylim(0,40)+
+#   annotate(geom="text",label=paste(adm.names$Country[incid_o[5]],"-\n",adm.names$NAME_2[incid_o[5]]),
+#            x=70,y=37)+
+#   xlab("Age")+
+#   ylab("Annual Lassa Fever\n incidence rate (per 1,000)")+
+#   # guides(fill=guide_legend(title="Age"))+
+#   theme(axis.title=element_text(size=14),
+#         legend.text=element_text(size=12),
+#         legend.title=element_text(size=14),
+#         axis.text=element_text(size=11)) #,
+# 
+# 
+# incid_a6=infs_to_incid(incid_o[6],spillover.infections.lf.risk.reinf,pop.by.adm.by.age)
+# age_p6<-ggplot(incid_a6,aes(x=age,y=q5))+
+#   geom_line(lwd=1)+
+#   theme_bw()+
+#   geom_ribbon(aes(ymin=q025,ymax=q975),alpha=0.2)+
+#   geom_ribbon(aes(ymin=q25,ymax=q75),alpha=0.5)+
+#   coord_cartesian(xlim=c(0,80),ylim=c(0,40))+
+#   #xlim(0,80)+
+#   #ylim(0,40)+
+#   annotate(geom="text",label=paste(adm.names$Country[incid_o[6]],"-\n",adm.names$NAME_2[incid_o[6]]),
+#            x=70,y=37)+
+#   xlab("Age")+
+#   ylab("Annual Lassa Fever\n incidence rate (per 1,000)")+
+#   # guides(fill=guide_legend(title="Age"))+
+#   theme(axis.title=element_text(size=14),
+#         legend.text=element_text(size=12),
+#         legend.title=element_text(size=14),
+#         axis.text=element_text(size=11)) #,
+# 
+# # ggsave(age_p1,file="plots/age_incid_adm_top1.pdf",
+# #        width=8,height=5,units = "in")
+# 
+# library(ggpubr)
+# library(grid)
+# 
+# age_pmat<-ggarrange(age_p1,age_p2,age_p3,age_p4,age_p5,age_p6,
+#           ncol=2,nrow=3,labels="AUTO")
+# #common x and y axes
+# age_pmat_u<-ggarrange(age_p1 + rremove("ylab") + rremove("xlab"),
+#                       age_p2 + rremove("ylab") + rremove("xlab"),
+#                       age_p3 + rremove("ylab") + rremove("xlab"),
+#                       age_p4 + rremove("ylab") + rremove("xlab"),
+#                       age_p5 + rremove("ylab") + rremove("xlab"),
+#                       age_p6 + rremove("ylab") + rremove("xlab"),
+#                     ncol=2,nrow=3,labels="AUTO")
+# age_pmat_u<-annotate_figure(age_pmat_u,
+#                 left=textGrob("Annual Lassa Fever\n incidence rate (per 1,000)",rot=90,vjust=1),
+#                 bottom=textGrob("Age"))
+# 
+# ggsave(age_pmat_u,file="plots/age_incid_adm2_top6_upd.pdf",
+#        width=6.5,height=8,units="in")

@@ -3,6 +3,7 @@ rm(list=ls())
 
 # load package for Dirichlet multinomial probability
 library(extraDistr)
+library(tidyverse)
 
 
 ##Which level to conduct analysis
@@ -66,10 +67,22 @@ if(admin==2){
 ob$year = as.numeric(substr(ob$YEAR,0,4))
 ob = subset(ob, ob$year >= 2010)
 ob = ob[-which(ob$Human.Human..1...Zoonotic..0...Unknown..NA.==1),]
-ob = data.frame(
-  uid = sort(unique(ob$uid)),
-  cases = aggregate(ob$CASES,list(ob$uid),sum,na.rm=T)[,2],
-  deaths = aggregate(ob$DEATHS,list(ob$uid),sum,na.rm=T)[,2])
+
+##NEW - 2025 PLOS NTD revisions
+##Merge multiple data sources for same admin1 unit
+ob_c1= ob %>% group_by(uid,YEAR,Source) %>%
+  summarize(cases=sum(CASES,na.rm=T),deaths=sum(DEATHS,na.rm=T))
+#Choose b/w max among diff sources
+ob_c2 = ob_c1 %>% group_by(uid,YEAR) %>%
+  summarize(cases=max(cases,na.rm=T),deaths=max(deaths,na.rm=T))  
+ob= ob_c2 %>% group_by(uid) %>%
+  summarize(cases=sum(cases,na.rm=T),deaths=sum(deaths,na.rm=T))
+
+# ob = data.frame(
+#   uid = sort(unique(ob$uid)),
+#   cases = aggregate(ob$CASES,list(ob$uid),sum,na.rm=T)[,2],
+#   deaths = aggregate(ob$DEATHS,list(ob$uid),sum,na.rm=T)[,2])
+ob$ADM0=substring(ob$uid,1,3)
 ob = ob[-which(ob$uid==''),]
 
 # add outbreak data to the data set for all adm1s
@@ -108,4 +121,4 @@ row.names(rr.inf) = rr$uid
 # save sampled infection numbers and info about each adm1
 save(rr,rr.inf,file=paste0('results/projected_infections_adm',admin,'_revrate',as.character(rev_rate*100),'_country_upd.RData'))
 # save summarized case/death observation data for later use
-write_csv(ob,file=paste0('results/observed_cases_deaths_adm',admin,".csv"))
+write_csv(ob,file=paste0('results/observed_cases_deaths_adm',admin,"_upd.csv"))

@@ -3,6 +3,7 @@ rm(list=ls())
 
 # load libraries
 library(doParallel)
+library(tidyverse)
 
 ##Which level to conduct analysis
 args = commandArgs(trailingOnly=TRUE)
@@ -13,7 +14,7 @@ rev_rate=as.numeric(args[2])/100
 load(paste0('results/foi_from_sero_adm',admin,'_revrate',as.character(rev_rate*100),'.RData'))
 ss$level=admin
 ##Save locs with foi data for later use
-write_csv(ss,file=paste0("results/estimated_foi_adm",admin,".csv"))
+write_csv(ss,file=paste0("results/estimated_foi_adm",admin,'_revrate',as.character(rev_rate*100),".csv"))
 
 # read in demographic data for all adm1s
 if(admin==2){
