@@ -3,8 +3,9 @@ Estimate sub-national LASV infections and LF incidence rates in West Africa
 
 This repository contains the code to recreate the modeling analysis in the article "Estimation of Lassa fever incidence rates in West Africa: development of a modeling framework to inform vaccine trial design". This article is currently available as a preprint at: https://doi.org/10.1101/2024.12.11.24318478 
 
-The analysis involves running the following R scripts from the 'code' directory:
-
+The analysis involves running the following R scripts from the 'code' directory:<br/>
+*Note: to successfully complete this analysis for the 2nd administrative level, the zip file containing population data, adm_2_pop_upd.z, will first need to be unzipped.<br />
+<br/>
 0. prior_iceberg.R<br />
     	Description: Estimate priors for proportion of infections that are asymptomatic/mild/unreported, a reported case, a reported death<br />
 	Input: data/iceberg_data.csv<br />
@@ -56,7 +57,7 @@ The analysis involves running the following R scripts from the 'code' directory:
 		1. admin: 1 or 2<br />
 		2. reversion rate: 0,3,6 (%)<br />
 		3. Indicator whether to use FOI estimates from step4 or from step4alt (ensemble model): 1 or 2	<br />
-*Note: to successfully complete this analysis for the 2nd administrative level, the zip file containing population data, adm_2_pop_upd.z, will first need to be unzipped.<br />
+
 <br />
 To also complete the analysis that uses regression models to estimate FOI the following additional scripts should be run:<br />
 A. step4alt_model_foi_estimation.R<br />
